@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bina Shop - Beauté & Mode pour Femmes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #FF8E8E;
+            --dark: #2C3E50;
+            --light: #F8F9FA;
+            --accent: #F3C4C4;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+        }
+        
+        .title-font {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(255,107,107,0.8) 0%, rgba(207, 151, 151, 0.9) 100%);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cart-item-enter {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        
+        .cart-item-enter-active {
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 300ms ease-in;
+        }
+        
+        .cart-item-exit {
+            opacity: 1;
+        }
+        
+        .cart-item-exit-active {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 300ms ease-out;
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <span class="text-2xl title-font font-bold text-pink-600">Bina</span>
+                        <span class="text-2xl title-font font-bold text-gray-800">Shop</span>
+                    </a>
+                </div>
+                
+                <!-- Navigation (Desktop) -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-800 hover:text-pink-600 font-medium transition">Accueil</a>
+                    <div class="dropdown relative">
+                        <button class="text-gray-800 hover:text-pink-600 font-medium transition flex items-center">
+                            Produits <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div class="dropdown-menu absolute hidden bg-white shadow-lg rounded-md mt-2 py-2 w-48">
+                            <a href="#" class="block px-4 py-2 hover:bg-pink-50 text-gray-700">Mèches</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-pink-50 text-gray-700">Perruques</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-pink-50 text-gray-700">Tenues</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-pink-50 text-gray-700">Accessoires</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-pink-50 text-gray-700">Soins capillaires</a>
+                        </div>
+                    </div>
+                    <a href="#" class="text-gray-800 hover:text-pink-600 font-medium transition">Nouveautés</a>
+                    <a href="#" class="text-gray-800 hover:text-pink-600 font-medium transition">Promotions</a>
+                    <a href="#" class="text-gray-800 hover:text-pink-600 font-medium transition">Contact</a>
+                </nav>
+                
+                <!-- Icons -->
+                <div class="flex items-center space-x-4">
+                    <button id="search-btn" class="text-gray-600 hover:text-pink-600">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a href="#" class="text-gray-600 hover:text-pink-600">
+                        <i class="far fa-user"></i>
+                    </a>
+                    <button id="cart-btn" class="text-gray-600 hover:text-pink-600 relative">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-pink-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Bar (Hidden by default) -->
+            <div id="search-bar" class="hidden mt-3">
+                <div class="relative">
+                    <input type="text" placeholder="Rechercher des produits..." class="w-full border border-gray-300 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t py-2 px-4">
+            <a href="#" class="block py-2 text-gray-800 hover:text-pink-600">Accueil</a>
+            <div class="py-2">
+                <button id="mobile-products-btn" class="flex items-center justify-between w-full text-gray-800 hover:text-pink-600">
+                    <span>Produits</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div id="mobile-products-menu" class="hidden pl-4 mt-1">
+                    <a href="#" class="block py-1 text-gray-700 hover:text-pink-600">Mèches</a>
+                    <a href="#" class="block py-1 text-gray-700 hover:text-pink-600">Perruques</a>
+                    <a href="#" class="block py-1 text-gray-700 hover:text-pink-600">Tenues</a>
+                    <a href="#" class="block py-1 text-gray-700 hover:text-pink-600">Accessoires</a>
+                    <a href="#" class="block py-1 text-gray-700 hover:text-pink-600">Soins capillaires</a>
+                </div>
+            </div>
+            <a href="#" class="block py-2 text-gray-800 hover:text-pink-600">Nouveautés</a>
+            <a href="#" class="block py-2 text-gray-800 hover:text-pink-600">Promotions</a>
+            <a href="#" class="block py-2 text-gray-800 hover:text-pink-600">Contact</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white">
+        <div class="container mx-auto px-4 py-16 md:py-24">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 title-font">Découvrez votre beauté intérieure</h1>
+                    <p class="text-xl mb-6">Des produits de qualité pour sublimer votre style et renforcer votre confiance.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="bg-white text-pink-600 px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition">Boutique maintenant</a>
+                        <a href="#" class="border border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-pink-600 transition">Découvrir</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Femme confiante" class="rounded-lg shadow-xl max-w-md w-full h-auto object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 title-font">Nos Catégories</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <a href="#" class="category-card bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition group">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Mèches" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-medium text-lg">Mèches</h3>
+                        <p class="text-gray-600 text-sm">Naturelles et synthétiques</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="category-card bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition group">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1595476712398-8a4675195449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Perruques" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-medium text-lg">Perruques</h3>
+                        <p class="text-gray-600 text-sm">Style et élégance</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="category-card bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition group">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Tenues" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-medium text-lg">Tenues</h3>
+                        <p class="text-gray-600 text-sm">Pour toutes occasions</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="category-card bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition group">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1595341595379-cf0f2a5d4873?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Accessoires" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-medium text-lg">Accessoires</h3>
+                        <p class="text-gray-600 text-sm">Pour compléter votre look</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="category-card bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition group">
+                    <div class="h-40 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1608248543803-ba9eb8a1b0f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Soins capillaires" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-medium text-lg">Soins capillaires</h3>
+                        <p class="text-gray-600 text-sm">Naturels et efficaces</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold title-font">Nouveautés</h2>
+                <a href="#" class="text-pink-600 hover:text-pink-700 font-medium flex items-center">
+                    Voir tout <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Mèches brésiliennes" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded-full">NOUVEAU</div>
+                        <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-pink-600 hover:text-white transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-lg">Mèches brésiliennes</h3>
+                                <p class="text-gray-600 text-sm">100% cheveux naturels</p>
+                            </div>
+                            <span class="font-bold text-pink-600">59,99€</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="text-gray-600 text-sm ml-1">(24)</span>
+                            </div>
+                            <button class="add-to-cart bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition" data-id="1" data-name="Mèches brésiliennes" data-price="59.99" data-image="https://images.unsplash.com/photo-1600334129128-685c5582fd35?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80">
+                                <i class="fas fa-plus mr-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1595476712398-8a4675195449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Perruque lace front" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded-full">NOUVEAU</div>
+                        <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-pink-600 hover:text-white transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-lg">Perruque lace front</h3>
+                                <p class="text-gray-600 text-sm">Style naturel</p>
+                            </div>
+                            <span class="font-bold text-pink-600">89,99€</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span class="text-gray-600 text-sm ml-1">(18)</span>
+                            </div>
+                            <button class="add-to-cart bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition" data-id="2" data-name="Perruque lace front" data-price="89.99" data-image="https://images.unsplash.com/photo-1595476712398-8a4675195449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80">
+                                <i class="fas fa-plus mr-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Robe élégante" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded-full">NOUVEAU</div>
+                        <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-pink-600 hover:text-white transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-lg">Robe élégante</h3>
+                                <p class="text-gray-600 text-sm">Soirée et événements</p>
+                            </div>
+                            <span class="font-bold text-pink-600">65,99€</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span class="text-gray-600 text-sm ml-1">(32)</span>
+                            </div>
+                            <button class="add-to-cart bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition" data-id="3" data-name="Robe élégante" data-price="65.99" data-image="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80">
+                                <i class="fas fa-plus mr-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1595341595379-cf0f2a5d4873?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Set accessoires" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded-full">NOUVEAU</div>
+                        <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-pink-600 hover:text-white transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-lg">Set accessoires</h3>
+                                <p class="text-gray-600 text-sm">Pour cheveux</p>
+                            </div>
+                            <span class="font-bold text-pink-600">29,99€</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="text-gray-600 text-sm ml-1">(15)</span>
+                            </div>
+                            <button class="add-to-cart bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition" data-id="4" data-name="Set accessoires" data-price="29.99" data-image="https://images.unsplash.com/photo-1595341595379-cf0f2a5d4873?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80">
+                                <i class="fas fa-plus mr-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sale Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold title-font">Promotions</h2>
+                <a href="#" class="text-pink-600 hover:text-pink-700 font-medium flex items-center">
+                    Voir tout <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Product 5 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1608248543803-ba9eb8a1b0f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Shampoing hydratant" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">-30%</div>
+                        <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-pink-600 hover:text-white transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-lg">Shampoing hydratant</h3>
+                                <p class="text-gray-600 text-sm">Pour cheveux secs</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-pink-600">14,99€</span>
+                                <span class="text-gray-500 text-sm line-through ml-1">21,99€</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span class="text-gray-600 text-sm ml-1">(28)</span>
+                            </div>
+                            <button class="add-to-cart bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition" data-id="5" data-name="Shampoing hydratant" data-price="14.99" data-image="https://images.unsplash.com/photo-1608248543803-ba9eb8a1b0f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80">
+                                <i class="fas fa-plus mr-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 6 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1595476712398-8a4675195449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Perruque courte" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">-20%</div>
+                        <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-pink-600 hover:text-white transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-lg">Perruque courte</h3>
+                                <p class="text-gray-600 text-sm">Style moderne</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-pink-600">71,99€</span>
+                                <span class="text-gray-500 text-sm line-through ml-1">89,99€</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="text-gray-600 text-sm ml-1">(19)</span>
+                            </div>
+                            <button class="add-to-cart bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition" data-id="6" data-name="Perruque courte" data-price="71.99" data-image="https://images.unsplash.com/photo-1595476712398-8a4675195449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80">
+                                <i class="fas fa-plus mr-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 7 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Jupe crayon" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">-15%</div>
+                        <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-pink-600 hover:text-white transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-lg">Jupe crayon</h3>
+                                <p class="text-gray-600 text-sm">Bureau et soirée</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-pink-600">42,49€</span>
+                                <span class="text-gray-500 text-sm line-through ml-1">49,99€</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span class="text-gray-600 text-sm ml-1">(27)</span>
+                            </div>
+                            <button class="add-to-cart bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition" data-id="7" data-name="Jupe crayon" data-price="42.49" data-image="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80">
+                                <i class="fas fa-plus mr-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 8 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1595341595379-cf0f2a5d4873?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Barrettes décoratives" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">-25%</div>
+                        <button class="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-pink-600 hover:text-white transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium text-lg">Barrettes décoratives</h3>
+                                <p class="text-gray-600 text-sm">Lot de 5 pièces</p>
+                            </div>
+                            <div>
+                                <span class="font-bold text-pink-600">18,74€</span>
+                                <span class="text-gray-500 text-sm line-through ml-1">24,99€</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="flex items-center text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="text-gray-600 text-sm ml-1">(14)</span>
+                            </div>
+                            <button class="add-to-cart bg-pink-600 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-700 transition" data-id="8" data-name="Barrettes décoratives" data-price="18.74" data-image="https://images.unsplash.com/photo-1595341595379-cf0f2a5d4873?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80">
+                                <i class="fas fa-plus mr-1"></i> Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 title-font">Ce que disent nos clientes</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="flex items-center text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-gray-600 text-sm">5/5</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"Les mèches brésiliennes sont d'une qualité exceptionnelle. Elles ont l'air tellement naturelles que mes amies pensaient que c'était mes vrais cheveux !"</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Sophie M." class="w-10 h-10 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-medium">Sophie M.</h4>
+                            <p class="text-gray-600 text-sm">Paris</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="flex items-center text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="text-gray-600 text-sm">4.5/5</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"La perruque lace front est incroyablement confortable et réaliste. Le service client était également très réactif lorsque j'avais une question sur ma commande."</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80" alt="Aïssata D." class="w-10 h-10 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-medium">Aïssata D.</h4>
+                            <p class="text-gray-600 text-sm">Lyon</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="flex items-center text-yellow-400 mr-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-gray-600 text-sm">5/5</span>
+                    </div>
+                    <p class="text-gray-700 mb-4">"J'ai acheté la robe élégante pour un mariage et j'ai reçu tellement de compliments ! La qualité est excellente et elle était parfaitement à ma taille."</p>
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=686&q=80" alt="Clara T." class="w-10 h-10 rounded-full object-cover mr-3">
+                        <div>
+                            <h4 class="font-medium">Clara T.</h4>
+                            <p class="text-gray-600 text-sm">Marseille</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-12 bg-pink-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4 title-font">Abonnez-vous à notre newsletter</h2>
+            <p class="text-xl mb-6 max-w-2xl mx-auto">Recevez des offres exclusives, des conseils beauté et soyez la première à connaître nos nouvelles collections.</p>
+            
+            <form class="max-w-md mx-auto flex">
+                <input type="email" placeholder="Votre adresse email" class="flex-grow px-4 py-3 rounded-l-full focus:outline-none text-gray-800">
+                <button type="submit" class="bg-pink-800 hover:bg-pink-900 px-6 py-3 rounded-r-full font-medium transition">S'abonner</button>
+            </form>
+            
+            <p class="text-sm mt-4 opacity-80">Nous ne partagerons jamais votre email avec qui que ce soit.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <!-- About -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 title-font">Bina Shop</h3>
+                    <p class="mb-4">Votre destination en ligne pour des produits de beauté et de mode de qualité supérieure.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Liens rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Accueil</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Produits</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Nouveautés</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Promotions</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Customer Service -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Service client</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Mon compte</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Suivi de commande</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Livraison & Retours</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Politique de confidentialité</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Conditions générales</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Contactez-nous</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-pink-400"></i>
+                            <span class="text-gray-400">123 Rue de la Mode, 75001 Paris, France</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-pink-400"></i>
+                            <span class="text-gray-400">+33 1 23 45 67 89</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-pink-400"></i>
+                            <span class="text-gray-400">contact@binashop.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2023 Bina Shop. Tous droits réservés.</p>
+                <div class="flex space-x-6">
+                    <img src="https://via.placeholder.com/40x25?text=Visa" alt="Visa" class="h-6">
+                    <img src="https://via.placeholder.com/40x25?text=Mastercard" alt="Mastercard" class="h-6">
+                    <img src="https://via.placeholder.com/40x25?text=PayPal" alt="PayPal" class="h-6">
+                    <img src="https://via.placeholder.com/40x25?text=CB" alt="CB" class="h-6">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">Votre Panier</h3>
+                <button id="close-cart" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="cart-items" class="mb-6 space-y-4">
+                <!-- Cart items will be added here dynamically -->
+                <div class="text-center py-8 text-gray-500" id="empty-cart-message">
+                    <i class="fas fa-shopping-bag text-4xl mb-2"></i>
+                    <p>Votre panier est vide</p>
+                </div>
+            </div>
+            
+            <div id="cart-summary" class="border-t border-gray-200 pt-4 hidden">
+                <div class="flex justify-between mb-2">
+                    <span>Sous-total</span>
+                    <span id="cart-subtotal">0,00€</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span>Livraison</span>
+                    <span>Calculé à l'étape suivante</span>
+                </div>
+                <div class="flex justify-between font-bold text-lg mt-4">
+                    <span>Total</span>
+                    <span id="cart-total">0,00€</span>
+                </div>
+                
+                <div class="mt-6 space-y-3">
+                    <a href="#" class="block bg-pink-600 hover:bg-pink-700 text-white text-center py-3 rounded-full font-medium transition">Passer la commande</a>
+                    <a href="#" class="block border border-pink-600 text-pink-600 hover:bg-pink-50 text-center py-3 rounded-full font-medium transition">Continuer mes achats</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay for cart sidebar -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileProductsBtn = document.getElementById('mobile-products-btn');
+        const mobileProductsMenu = document.getElementById('mobile-products-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        mobileProductsBtn.addEventListener('click', () => {
+            mobileProductsMenu.classList.toggle('hidden');
+            const icon = mobileProductsBtn.querySelector('i');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        });
+        
+        // Search bar toggle
+        const searchBtn = document.getElementById('search-btn');
+        const searchBar = document.getElementById('search-bar');
+        
+        searchBtn.addEventListener('click', () => {
+            searchBar.classList.toggle('hidden');
+        });
+        
+        // Cart functionality
+        const cartBtn = document.getElementById('cart-btn');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const closeCartBtn = document.getElementById('close-cart');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const cartCount = document.getElementById('cart-count');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const emptyCartMessage = document.getElementById('empty-cart-message');
+        const cartSummary = document.getElementById('cart-summary');
+        const cartSubtotal = document.getElementById('cart-subtotal');
+        const cartTotal = document.getElementById('cart-total');
+        
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Update cart count
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            if (totalItems > 0) {
+                cartCount.classList.remove('hidden');
+            } else {
+                cartCount.classList.add('hidden');
+            }
+        }
+        
+        // Update cart sidebar
+        function updateCartSidebar() {
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                emptyCartMessage.classList.remove('hidden');
+                cartSummary.classList.add('hidden');
+            } else {
+                emptyCartMessage.classList.add('hidden');
+                
+                let subtotal = 0;
+                
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'flex items-start py-4 border-b border-gray-200';
+                    cartItem.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded">
+                        <div class="ml-4 flex-grow">
+                            <h4 class="font-medium">${item.name}</h4>
+                            <p class="text-gray-600 text-sm">${item.price.toFixed(2)}€</p>
+                            <div class="flex items-center mt-2">
+                                <button class="decrease-quantity text-gray-500 hover:text-pink-600" data-id="${item.id}">
+                                    <i class="fas fa-minus text-xs"></i>
+                                </button>
+                                <span class="quantity mx-2">${item.quantity}</span>
+                                <button class="increase-quantity text-gray-500 hover:text-pink-600" data-id="${item.id}">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="remove-item text-gray-400 hover:text-red-500 ml-2" data-id="${item.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    cartItemsContainer.appendChild(cartItem);
+                });
+                
+                cartSubtotal.textContent = subtotal.toFixed(2) + '€';
+                cartTotal.textContent = subtotal.toFixed(2) + '€';
+                cartSummary.classList.remove('hidden');
+            }
+        }
+        
+        // Add to cart
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const price = parseFloat(this.getAttribute('data-price'));
+                const image = this.getAttribute('data-image');
+                
+                const existingItem = cart.find(item => item.id === id);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id,
+                        name,
+                        price,
+                        image,
+                        quantity: 1
+                    });
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                updateCartSidebar();
+                
+                // Show cart sidebar when adding an item
+                cartSidebar.classList.remove('translate-x-full');
+                cartOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        // Cart sidebar toggle
+        cartBtn.addEventListener('click', () => {
+            cartSidebar.classList.remove('translate-x-full');
+            cartOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            updateCartSidebar();
+        });
+        
+        closeCartBtn.addEventListener('click', () => {
+            cartSidebar.classList.add('translate-x-full');
+            cartOverlay.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+        
+        cartOverlay.addEventListener('click', () => {
+            cartSidebar.classList.add('translate-x-full');
+            cartOverlay.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Handle cart item quantity changes and removal
+        document.addEventListener('click', function(e) {
+            // Decrease quantity
+            if (e.target.classList.contains('decrease-quantity') || e.target.closest('.decrease-quantity')) {
+                const button = e.target.classList.contains('decrease-quantity') ? e.target : e.target.closest('.decrease-quantity');
+                const id = button.getAttribute('data-id');
+                const item = cart.find(item => item.id === id);
+                
+                if (item.quantity > 1) {
+                    item.quantity -= 1;
+                } else {
+                    cart = cart.filter(item => item.id !== id);
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                updateCartSidebar();
+            }
+            
+            // Increase quantity
+            if (e.target.classList.contains('increase-quantity') || e.target.closest('.increase-quantity')) {
+                const button = e.target.classList.contains('increase-quantity') ? e.target : e.target.closest('.increase-quantity');
+                const id = button.getAttribute('data-id');
+                const item = cart.find(item => item.id === id);
+                
+                item.quantity += 1;
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                updateCartSidebar();
+            }
+            
+            // Remove item
+            if (e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) {
+                const button = e.target.classList.contains('remove-item') ? e.target : e.target.closest('.remove-item');
+                const id = button.getAttribute('data-id');
+                
+                cart = cart.filter(item => item.id !== id);
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                updateCartSidebar();
+            }
+        });
+        
+        // Initialize cart on page load
+        updateCartCount();
+    });
+    </script>
+</body>
+</html>
