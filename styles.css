@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap");
+
+:root {
+  --primary: #ff6b6b;
+  --secondary: #f17f7fc4;
+  --dark: #2c3e50;
+  --light: #f8f9fa;
+  --accent: #f3c4c4;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--light);
+}
+
+.title-font {
+  font-family: "Playfair Display", serif;
+}
+
+.hero-gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 107, 0.66) 0%,
+    rgba(175, 106, 106, 0.87) 100%
+  );
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item-enter {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.cart-item-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 300ms ease-in;
+}
+
+.cart-item-exit {
+  opacity: 1;
+}
+
+.cart-item-exit-active {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 300ms ease-out;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
